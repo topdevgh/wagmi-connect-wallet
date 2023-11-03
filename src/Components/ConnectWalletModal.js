@@ -1,10 +1,19 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useWeb3React } from "@web3-react/core";
-import { injected, walletconnect, coinbasewallet } from "../connectors";
-import { WalletConnectConnector } from "@web3-react/walletconnect-connector";
+import {
+  injected,
+  walletconnect,
+  coinbasewallet,
+  network,
+} from "../connectors";
+import { useConnect, useAccount } from "wagmi";
 
 const ConnectWalletModal = ({}) => {
-  const { account, activate, deactivate, error } = useWeb3React();
+  const { account, activate } = useWeb3React();
+  const { connect, connectors, error, isLoading, pendingConnector } =
+    useConnect();
+  const { address, connector, isConnected } = useAccount();
+
   const [isConnecting, setIsConnecting] = useState(false);
   const [modalshow, setModalshow] = useState(true);
   const closeButton = useRef(null);
@@ -36,17 +45,17 @@ const ConnectWalletModal = ({}) => {
   //       console.log(error);
   //     })
   // }, [])
-  const onclickMetaMaskConnect = async () => {
-    setIsConnecting(true);
+  // const onclickMetaMaskConnect = async () => {
+  //   setIsConnecting(true);
 
-    try {
-      await activate(injected);
-    } catch (err) {
-      console.error(err);
-    }
+  //   try {
+  //     await activate(injected);
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
 
-    setIsConnecting(false);
-  };
+  //   setIsConnecting(false);
+  // };
   const isMetamaskInstalled = () => {
     if (typeof window.ethereum !== "undefined") {
       return true;
@@ -91,7 +100,7 @@ const ConnectWalletModal = ({}) => {
 
     setIsConnecting(false);
   };
-  if (account) {
+  if (isConnected) {
     // alert(account)
     closeButton.current.click();
   }
@@ -160,7 +169,8 @@ const ConnectWalletModal = ({}) => {
             "background-color": "#1e1e1e",
             "background-size": "cover",
             "border-radius": "30px",
-          }}>
+          }}
+        >
           <span class="container faq__title">
             <div class="row p-xl-3 mt-lg-5 mt-4 justify-content-center d-lg-block d-none">
               <div class=" col-12 d-flex gap-xxl-5 card__1__section gap-md-4 position-relative justify-content-center mx-1">
@@ -178,12 +188,15 @@ const ConnectWalletModal = ({}) => {
                       <p class="text-white mt-3">MetaMask</p>
                     </div>
                     <h4 class="text-yellow"></h4>
-                    <button
-                      class="buy__btn1"
-                      onClick={onclickMetaMaskConnect}
-                      style={{ "margin-top": "10px" }}>
-                      Connect
-                    </button>
+                    {connectors.map((connector) => (
+                      <button
+                        class="buy__btn1"
+                        onClick={() => connect({ connector: connector })}
+                        style={{ "margin-top": "10px" }}
+                      >
+                        Connect
+                      </button>
+                    ))}
                   </div>
                 </div>
                 <div class="card__box card__black" id="card__1">
@@ -203,7 +216,8 @@ const ConnectWalletModal = ({}) => {
                     <button
                       class="buy__btn1"
                       onClick={onclickWalletconnect}
-                      style={{ "margin-top": "10px" }}>
+                      style={{ "margin-top": "10px" }}
+                    >
                       Connect
                     </button>
                   </div>
@@ -225,7 +239,8 @@ const ConnectWalletModal = ({}) => {
                     <button
                       class="buy__btn1"
                       onClick={onclickCoinBaseConnect}
-                      style={{ "margin-top": "10px" }}>
+                      style={{ "margin-top": "10px" }}
+                    >
                       Connect
                     </button>
                   </div>
@@ -235,7 +250,8 @@ const ConnectWalletModal = ({}) => {
                   type="button"
                   class="btn-close"
                   data-bs-dismiss="modal"
-                  aria-label="Close"></button>
+                  aria-label="Close"
+                ></button>
               </div>
             </div>
             <div class="row p-xl-3 mt-lg-5 mt-4 justify-content-center d-lg-none d-block">
@@ -257,12 +273,15 @@ const ConnectWalletModal = ({}) => {
                             <p class="text-white mt-3">MetaMask</p>
                           </div>
                           <h4 class="text-yellow"></h4>
-                          <button
-                            class="buy__btn1"
-                            onClick={onclickMetaMaskConnect}
-                            style={{ "margin-top": "10px" }}>
-                            Connect
-                          </button>
+                          {connectors.map((connector) => (
+                            <button
+                              class="buy__btn1"
+                              onClick={() => connect({ connector: connector })}
+                              style={{ "margin-top": "10px" }}
+                            >
+                              Connect
+                            </button>
+                          ))}
                         </div>
                       </div>
                     </div>
@@ -286,7 +305,8 @@ const ConnectWalletModal = ({}) => {
                           <button
                             class="buy__btn1"
                             onClick={onclickWalletconnect}
-                            style={{ "margin-top": "10px" }}>
+                            style={{ "margin-top": "10px" }}
+                          >
                             Connect
                           </button>
                         </div>
@@ -312,7 +332,8 @@ const ConnectWalletModal = ({}) => {
                           <button
                             class="buy__btn1"
                             onClick={onclickCoinBaseConnect}
-                            style={{ "margin-top": "10px" }}>
+                            style={{ "margin-top": "10px" }}
+                          >
                             Connect
                           </button>
                         </div>
@@ -325,7 +346,8 @@ const ConnectWalletModal = ({}) => {
                   type="button"
                   class="btn-close"
                   data-bs-dismiss="modal"
-                  aria-label="Close"></button>
+                  aria-label="Close"
+                ></button>
               </div>
               <div class="swiper-button-prev prev-button-1">
                 <img src="/assets/images/arrow-left.png" alt="image" />

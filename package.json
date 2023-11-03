@@ -29,6 +29,8 @@
     "request": "^2.88.2",
     "sqlite3": "^5.1.6",
     "swiper": "^9.3.2",
+    "viem": "^1.18.4",
+    "wagmi": "^1.4.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

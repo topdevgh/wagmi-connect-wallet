@@ -6,6 +6,7 @@ import SwiperCore, { Navigation } from "swiper";
 // Import Swiper styles
 import "swiper/swiper.min.css";
 import { contract_address, goerliNetworkChainId } from "../constants";
+import { useAccount, useConnect, useDisconnect } from "wagmi";
 
 SwiperCore.use([Navigation]);
 
@@ -15,7 +16,8 @@ const chain = "goerli"; // or 'bsc', 'polygon', etc.
 
 function Banner() {
   const { account, activate, deactivate, error } = useWeb3React();
-
+  const { address, connector, isConnected } = useAccount();
+  const { disconnect } = useDisconnect();
   // Define the current index of the active slide
   const [currentIndex, setCurrentIndex] = useState(0);
   const [nfts, setNfts] = useState([]);
@@ -117,38 +119,40 @@ function Banner() {
                   "text-shadow": "2px 0px 2px red",
                   color: "#F5C700",
                   "margin-bottom": "0px",
-                }}>
+                }}
+              >
                 DEGENBULLS
               </h2>
-              <Link to="/faq" style={{textDecoration: 'none'}}>
+              <Link to="/faq" style={{ textDecoration: "none" }}>
                 <h2
-                className="logo_text1"
-                style={{
-                  "text-shadow": "2px 0px 2px red",
-                  color: "#F5C700",
-                  "margin-bottom": "0px",
-                }}>
+                  className="logo_text1"
+                  style={{
+                    "text-shadow": "2px 0px 2px red",
+                    color: "#F5C700",
+                    "margin-bottom": "0px",
+                  }}
+                >
                   FAQ
                 </h2>
               </Link>
             </div>
             <div className="d-flex gap-3 align-items-center">
               <button className="btn sign__btn text-black" id="btn-connect">
-                <div
-                  className="card__boxbolt"
-                  style={{marginLeft: "10px"}}>
-                  {!account ? (
+                <div className="card__boxbolt" style={{ marginLeft: "10px" }}>
+                  {!isConnected ? (
                     <>
                       <p
                         className="oneline"
                         style={{ marginBottom: "0px" }}
                         data-bs-toggle="modal"
-                        data-bs-target="#ConnectWalletModal">
+                        data-bs-target="#ConnectWalletModal"
+                      >
                         Connect <span>to Wallet</span>
                       </p>
                       <span
                         className="btn-badge hideimg"
-                        style={{ marginLeft: "5px" }}>
+                        style={{ marginLeft: "5px" }}
+                      >
                         <img src="/assets/images/arow-top.png" alt="arrow" />
                       </span>
                     </>
@@ -157,14 +161,16 @@ function Banner() {
                       <p
                         className="oneline"
                         style={{ marginBottom: "-5px" }}
-                        onClick={onDisconnect}>
-                        {account.substr(0, 10)}
+                        onClick={disconnect}
+                      >
+                        {address.substr(0, 10)}
                         <span>{"....."}</span>
-                        {account.slice(-4)}
+                        {address.slice(-4)}
                       </p>
                       <span
                         className="btn-badge hideimg"
-                        style={{ marginLeft: "5px" }}>
+                        style={{ marginLeft: "5px" }}
+                      >
                         <img src="/assets/images/arow-top.png" alt="arrow" />
                       </span>
                     </>
@@ -183,7 +189,8 @@ function Banner() {
               <div
                 className="card__box card__yellow__home"
                 id="card__3"
-                style={{ margin: "auto" }}>
+                style={{ margin: "auto" }}
+              >
                 <div className="card__dtl">
                   <h3 className="text-red" style={{ marginBottom: "0px" }}>
                     {totalKh} KH/S
@@ -205,7 +212,8 @@ function Banner() {
             <div className="container">
               <div
                 className="row  justify-content-center d-lg-block d-none"
-                style={{ marginTop: "6rem" }}>
+                style={{ marginTop: "6rem" }}
+              >
                 <Swiper
                   navigation={{
                     nextEl: ".swiper-button-next",
@@ -226,7 +234,8 @@ function Banner() {
                     handleButtonClick(swiper, "next");
                     handleButtonClick(swiper, "prev");
                   }}
-                  spaceBetween={parseInt("10px", 10)}>
+                  spaceBetween={parseInt("10px", 10)}
+                >
                   {nfts &&
                     nfts.map((item, index) => {
                       return (
@@ -235,7 +244,8 @@ function Banner() {
                             <div className="col-12 d-flex position-relative justify-content-center small">
                               <div
                                 className="card__box card__black"
-                                id="card__1">
+                                id="card__1"
+                              >
                                 <div className="card__img">
                                   <img src={item.image} alt="images" />
                                 </div>
@@ -263,13 +273,15 @@ function Banner() {
                     <div
                       className=""
                       onClick={handlePreviousClick1}
-                      style={{ position: "absolute", left: "40%" }}>
+                      style={{ position: "absolute", left: "40%" }}
+                    >
                       <img src="/assets/images/arrow-left.png" alt="image" />
                     </div>
                     <div
                       className=""
                       style={{ position: "absolute", left: "53%" }}
-                      onClick={handleNextClick1}>
+                      onClick={handleNextClick1}
+                    >
                       <img src="/assets/images/arrow-right.png" alt="image" />
                     </div>
                   </>
@@ -283,7 +295,8 @@ function Banner() {
                     slidesPerView={2}
                     onSwiper={(swiper) => {
                       setSwiper(swiper);
-                    }}>
+                    }}
+                  >
                     {nfts &&
                       nfts.map((item, index) => {
                         return (
@@ -293,11 +306,13 @@ function Banner() {
                                 <div className="swiper-wrapper"></div>
                                 <div
                                   className="swiper-slide"
-                                  style={{ display: "flex" }}>
+                                  style={{ display: "flex" }}
+                                >
                                   <div className=" col-12 d-flex gap-xxl-5 card__1__section gap-md-4 position-relative justify-content-center mx-1 small_banner">
                                     <div
                                       className="card__box card__black"
-                                      id="card__1">
+                                      id="card__1"
+                                    >
                                       <div className="card__img">
                                         <img src={item.image} alt="images" />
                                       </div>
@@ -329,13 +344,15 @@ function Banner() {
                       <div
                         className="swiper-button-prev prev-button-2"
                         style={{ width: "auto" }}
-                        onClick={handlePreviousClick}>
+                        onClick={handlePreviousClick}
+                      >
                         <img src="/assets/images/arrow-left.png" alt="image" />
                       </div>
                       <div
                         className="swiper-button-next next-button-2"
                         style={{ width: "auto" }}
-                        onClick={handleNextClick}>
+                        onClick={handleNextClick}
+                      >
                         <img src="/assets/images/arrow-right.png" alt="image" />
                       </div>
                     </>
